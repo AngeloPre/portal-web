@@ -1,1 +1,257 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'tailwindcss';
+
+@theme {
+  --color-ink: #0B2230;
+  --color-ink-2: #274251;
+  --color-muted: #5D7480;
+  --color-line: #E4E8EA;
+  --color-line-2: #EEF1F2;
+  --color-bg: #F5F6F3;
+  --color-paper: #FFFFFF;
+  --color-nav: #0F4C5C;
+  --color-nav-2: #0B3D4A;
+  --color-nav-hi: #163F4A;
+  --color-cyan: #18A5B8;
+  --color-cyan-2: #0E8A9C;
+  --color-green: #2E9E6A;
+  --color-green-health: #3FAE6B;
+  --color-red: #D9534F;
+  --color-amber: #E5A53B;
+  --color-amber-health: #E5B23B;
+
+  --color-pill-qual-bg: #DCE0E2;
+  --color-pill-qual-ink: #46555E;
+  --color-pill-pend-bg: #F7D7D2;
+  --color-pill-pend-ink: #8E2A24;
+  --color-pill-proc-bg: #D6EEF3;
+  --color-pill-proc-ink: #0C6170;
+  --color-pill-done-bg: #D4ECDC;
+  --color-pill-done-ink: #1F6B44;
+  --color-pill-cancel-bg: #E6E8E9;
+  --color-pill-cancel-ink: #4B5A63;
+
+  --color-alert-danger-bg: #FBE7E5;
+  --color-alert-danger-ink: #8E2A24;
+  --color-alert-danger-border: #F3C8C3;
+
+  --color-breadcrumb-sep: #B8C2C7;
+  --color-copyright: #94A4AB;
+  --color-sidenav-text: #C8DBDF;
+
+  --font-display: 'Instrument Sans', system-ui, sans-serif;
+  --font-sans: Inter, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+  --breakpoint-sm: 480px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+::selection {
+  background: rgba(24, 165, 184, 0.22);
+  color: var(--color-ink);
+}
+
+.display {
+  font-family: 'Instrument Sans', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+:root {
+  --mdc-typography-font-family: 'Inter', system-ui, sans-serif;
+  --mdc-typography-label-large-font-family: 'Inter', system-ui, sans-serif;
+  --mdc-typography-label-medium-font-family: 'Inter', system-ui, sans-serif;
+  --mdc-typography-label-small-font-family: 'Inter', system-ui, sans-serif;
+  --mdc-typography-body-large-font-family: 'Inter', system-ui, sans-serif;
+  --mdc-typography-body-medium-font-family: 'Inter', system-ui, sans-serif;
+
+  --mdc-outlined-text-field-container-shape: 8px;
+  --mdc-outlined-text-field-outline-color: #E4E8EA;
+  --mdc-outlined-text-field-hover-outline-color: #0E8A9C;
+  --mdc-outlined-text-field-focus-outline-color: #18A5B8;
+  --mdc-outlined-text-field-label-text-color: #5D7480;
+  --mdc-outlined-text-field-hover-label-text-color: #274251;
+  --mdc-outlined-text-field-focus-label-text-color: #0E8A9C;
+  --mdc-outlined-text-field-input-text-color: #0B2230;
+  --mdc-outlined-text-field-input-text-placeholder-color: rgba(93, 116, 128, 0.55);
+  --mdc-outlined-text-field-caret-color: #18A5B8;
+
+  --mdc-filled-button-container-color: #18A5B8;
+  --mdc-filled-button-label-text-color: #FFFFFF;
+  --mdc-filled-button-container-shape: 8px;
+  --mdc-filled-button-label-text-size: 0.875rem;
+  --mdc-filled-button-label-text-weight: 600;
+  --mdc-filled-button-label-text-font: 'Inter', system-ui, sans-serif;
+  --mdc-filled-button-hover-state-layer-color: transparent;
+  --mdc-filled-button-focus-state-layer-color: transparent;
+  --mdc-filled-button-pressed-state-layer-color: transparent;
+  --mdc-filled-button-hover-state-layer-opacity: 0;
+  --mdc-filled-button-focus-state-layer-opacity: 0;
+  --mdc-filled-button-pressed-state-layer-opacity: 0;
+
+  --mdc-outlined-button-container-shape: 8px;
+  --mdc-outlined-button-label-text-color: #0B2230;
+  --mdc-outlined-button-outline-color: #E4E8EA;
+  --mdc-outlined-button-label-text-size: 0.875rem;
+  --mdc-outlined-button-label-text-weight: 600;
+  --mdc-outlined-button-label-text-font: 'Inter', system-ui, sans-serif;
+  --mdc-outlined-button-hover-state-layer-color: transparent;
+  --mdc-outlined-button-focus-state-layer-color: transparent;
+  --mdc-outlined-button-pressed-state-layer-color: transparent;
+  --mdc-outlined-button-hover-state-layer-opacity: 0;
+  --mdc-outlined-button-focus-state-layer-opacity: 0;
+  --mdc-outlined-button-pressed-state-layer-opacity: 0;
+
+  --mdc-text-button-label-text-color: #0E8A9C;
+  --mdc-text-button-label-text-font: 'Inter', system-ui, sans-serif;
+  --mdc-text-button-label-text-weight: 500;
+
+  --mdc-checkbox-selected-icon-color: #18A5B8;
+  --mdc-checkbox-selected-focus-icon-color: #18A5B8;
+  --mdc-checkbox-selected-hover-icon-color: #0E8A9C;
+  --mdc-checkbox-selected-pressed-icon-color: #0E8A9C;
+  --mdc-checkbox-selected-checkmark-color: #FFFFFF;
+  --mdc-checkbox-unselected-icon-color: #5D7480;
+  --mdc-checkbox-unselected-hover-icon-color: #274251;
+  --mdc-checkbox-state-layer-size: 32px;
+  --mat-checkbox-label-text-color: #274251;
+  --mat-checkbox-label-text-font: 'Inter', system-ui, sans-serif;
+  --mat-checkbox-label-text-size: 13px;
+}
+
+.mat-mdc-unelevated-button.mat-primary:not(:disabled):hover {
+  background-color: #0E8A9C;
+}
+.mat-mdc-outlined-button:not(:disabled):hover {
+  background-color: #EEF1F2;
+}
+
+.surface-dark .mat-mdc-icon-button {
+  --mdc-icon-button-icon-color: var(--color-sidenav-text);
+}
+.surface-dark .mat-mdc-icon-button:hover {
+  --mdc-icon-button-icon-color: #FFFFFF;
+}
+
+.input-field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 44px;
+  padding: 0 12px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease;
+}
+.input-field:hover {
+  border-color: #C9D1D5;
+}
+.input-field:focus-within {
+  border-color: var(--color-cyan);
+  box-shadow: 0 0 0 4px rgba(24, 165, 184, 0.12);
+}
+.input-field--error,
+.input-field--error:hover {
+  border-color: var(--color-red);
+}
+.input-field--error:focus-within {
+  border-color: var(--color-red);
+  box-shadow: 0 0 0 4px rgba(217, 83, 79, 0.14);
+}
+.input-field__icon {
+  flex: none;
+  color: var(--color-muted);
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  line-height: 20px;
+}
+.input-field:focus-within .input-field__icon {
+  color: var(--color-cyan-2);
+}
+.input-field--error .input-field__icon {
+  color: var(--color-red);
+}
+.input-field__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  color: var(--color-ink);
+  caret-color: var(--color-cyan);
+}
+.input-field__input::placeholder {
+  color: rgba(93, 116, 128, 0.55);
+}
+.input-field__suffix {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  margin-right: -6px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--color-muted);
+  cursor: pointer;
+  transition:
+    background-color 120ms ease,
+    color 120ms ease;
+}
+.input-field__suffix:hover {
+  background: var(--color-line-2);
+  color: var(--color-ink-2);
+}
+.input-field__suffix:focus-visible {
+  outline: 2px solid var(--color-cyan);
+  outline-offset: 2px;
+}
+
+.bg-login-glow {
+  background-image:
+    radial-gradient(900px 600px at 20% 20%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(600px 400px at 80% 90%, rgba(24, 165, 184, 0.12), transparent 60%);
+}
