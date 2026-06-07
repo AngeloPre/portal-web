@@ -215,7 +215,7 @@ html {
   background: transparent;
   border: 0;
   outline: 0;
-  padding: 0;
+  padding: 0 0 0 6px;
   font: inherit;
   font-size: 14px;
   color: var(--color-ink);
