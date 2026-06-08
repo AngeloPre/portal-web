@@ -1,8 +1,14 @@
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { map } from 'rxjs';
 
 import { LogoComponent } from '@shared/components/logo/logo.component';
 
@@ -22,6 +28,7 @@ interface SecondaryAction {
 }
 
 const COLLAPSED_KEY = 'lactec.shell.collapsed';
+const HANDSET_QUERY = '(max-width: 767.98px)';
 
 function loadCollapsed(): boolean {
   if (typeof localStorage === 'undefined') return false;
@@ -32,9 +39,12 @@ function loadCollapsed(): boolean {
   selector: 'app-shell',
   standalone: true,
   imports: [
+    NgClass,
     RouterOutlet,
     RouterLink,
     RouterLinkActive,
+    MatSidenavModule,
+    MatToolbarModule,
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
@@ -44,8 +54,14 @@ function loadCollapsed(): boolean {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShellComponent {
+  private readonly breakpoints = inject(BreakpointObserver);
   private readonly router = inject(Router);
   private readonly loginService = inject(LoginService);
+
+  readonly isHandset = toSignal(
+    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((s) => s.matches)),
+    { initialValue: false },
+  );
 
   readonly collapsed = signal(loadCollapsed());
 

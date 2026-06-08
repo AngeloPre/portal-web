@@ -160,9 +160,6 @@ html {
 }
 
 .surface-dark .mat-mdc-icon-button {
-  --mdc-icon-button-icon-color: var(--color-sidenav-text);
-}
-.surface-dark .mat-mdc-icon-button:hover {
   --mdc-icon-button-icon-color: #FFFFFF;
 }
 
