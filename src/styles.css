@@ -150,6 +150,13 @@ html {
   --mat-checkbox-label-text-color: #274251;
   --mat-checkbox-label-text-font: 'Inter', system-ui, sans-serif;
   --mat-checkbox-label-text-size: 13px;
+
+  --mat-sidenav-container-shape: 0;
+}
+
+.mat-drawer,
+.mat-sidenav {
+  border-radius: 0;
 }
 
 .mat-mdc-unelevated-button.mat-primary:not(:disabled):hover {
@@ -251,4 +258,207 @@ html {
   background-image:
     radial-gradient(900px 600px at 20% 20%, rgba(255, 255, 255, 0.06), transparent 60%),
     radial-gradient(600px 400px at 80% 90%, rgba(24, 165, 184, 0.12), transparent 60%);
+}
+
+.orcamento-filter-tab {
+  position: relative;
+  padding: 12px 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
+}
+.orcamento-filter-tab:hover {
+  color: var(--color-ink-2);
+}
+.orcamento-filter-tab--active {
+  color: var(--color-ink);
+  border-bottom-color: var(--color-cyan);
+}
+
+.orcamento-filter-dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px 6px 12px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-ink-2);
+  cursor: pointer;
+  transition: border-color 120ms ease;
+}
+.orcamento-filter-dropdown:hover {
+  border-color: #c9d1d5;
+}
+.orcamento-filter-dropdown mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: var(--color-muted);
+}
+
+.orcamento-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(11, 34, 48, 0.04);
+}
+@media (min-width: 768px) {
+  .orcamento-card {
+    padding: 24px;
+  }
+}
+
+.orcamento-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.orcamento-card-body__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.orcamento-card-body__content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.orcamento-card-body__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+@media (min-width: 768px) {
+  .orcamento-card-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    grid-template-rows: auto auto 1fr;
+    column-gap: 40px;
+    row-gap: 16px;
+  }
+  .orcamento-card-body__header,
+  .orcamento-card-body__content {
+    display: contents;
+  }
+  .orcamento-card-body__header > .orcamento-card-field {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .orcamento-card-body__header > .orcamento-status-pill {
+    grid-column: 3;
+    grid-row: 1;
+    justify-self: end;
+  }
+  .orcamento-card-body__footer {
+    grid-column: 3;
+    grid-row: 2 / -1;
+    align-self: end;
+    min-width: 192px;
+  }
+}
+
+.orcamento-card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.orcamento-card-field__label {
+  font-size: 12px;
+  color: var(--color-muted);
+}
+.orcamento-card-field__value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.orcamento-card-action.mat-mdc-unelevated-button {
+  height: 32px;
+  min-width: 0;
+  padding-inline: 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.orcamento-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.orcamento-status-pill--qualification {
+  background: var(--color-pill-qual-bg);
+  color: var(--color-pill-qual-ink);
+}
+.orcamento-status-pill--pending {
+  background: var(--color-pill-pend-bg);
+  color: var(--color-pill-pend-ink);
+}
+.orcamento-status-pill--progress {
+  background: var(--color-pill-proc-bg);
+  color: var(--color-pill-proc-ink);
+}
+.orcamento-status-pill--finished {
+  background: var(--color-pill-done-bg);
+  color: var(--color-pill-done-ink);
+}
+.orcamento-status-pill--cancelled {
+  background: var(--color-pill-cancel-bg);
+  color: var(--color-pill-cancel-ink);
+}
+
+.orcamento-card-review {
+  display: flex;
+  gap: 12px;
+  padding: 16px;
+  background: var(--color-pill-proc-bg);
+  border: 1px solid #b9dde4;
+  border-radius: 10px;
+  color: var(--color-pill-proc-ink);
+}
+.orcamento-card-review__icon {
+  flex: none;
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: var(--color-cyan-2);
+}
+.orcamento-card-review__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+.orcamento-card-review__deadline {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-ink-2);
+}
+.orcamento-card-review__message {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-ink-2);
 }
