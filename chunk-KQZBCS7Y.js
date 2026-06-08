@@ -1,1 +1,0 @@
-import{o as p}from"./chunk-2NDCMXB4.js";import{ab as n,tb as o}from"./chunk-QLOIPNBQ.js";var a=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-wrapper-auth"]],decls:1,vars:0,template:function(e,i){e&1&&o(0,"router-outlet")},dependencies:[p],encapsulation:2,changeDetection:0})};export{a as WrapperAuthComponent};
