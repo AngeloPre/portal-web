@@ -2,13 +2,11 @@
 @let isCollapsed = !handset && collapsed();
 @let showLabels = handset || !isCollapsed;
 
-<mat-sidenav-container class="h-svh bg-bg">
+<mat-sidenav-container class="h-svh bg-bg" [autosize]="true">
   <mat-sidenav
     #drawer
     class="surface-dark border-0 overflow-x-hidden transition-all duration-200 ease-in-out"
-    [class.w-72!]="handset"
-    [class.w-64!]="!handset && !isCollapsed"
-    [class.w-20!]="isCollapsed"
+    [style.width.px]="handset ? 288 : isCollapsed ? 80 : 256"
     [mode]="handset ? 'over' : 'side'"
     [opened]="!handset"
     [disableClose]="!handset"
