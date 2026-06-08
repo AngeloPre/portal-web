@@ -5,7 +5,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 
+import { StatusStepperStep } from '@shared/components/status-stepper/status-stepper.component';
+
+import { AppDialogService } from '@/app/services/app-dialog.service';
 import { LoginService } from '@/app/services/login.service';
+
+import {
+  StatusPropostaDialogComponent,
+  StatusPropostaDialogData,
+} from './status-proposta-dialog/status-proposta-dialog.component';
 
 type StatusKey = 'qualification' | 'pending' | 'progress' | 'finished' | 'cancelled';
 type FilterKey = 'all' | 'pending' | 'progress' | 'finished' | 'cancelled';
@@ -44,6 +52,24 @@ const STATUS_BADGE: Record<StatusKey, StatusBadge> = {
   progress: { label: 'Em Andamento', badgeClass: 'orcamento-status-pill--progress' },
   finished: { label: 'Finalizado', badgeClass: 'orcamento-status-pill--finished' },
   cancelled: { label: 'Cancelado', badgeClass: 'orcamento-status-pill--cancelled' },
+};
+
+const PROPOSAL_STEPS: ReadonlyArray<StatusStepperStep> = [
+  { key: 'qualification', label: 'Qualificação' },
+  { key: 'analysis', label: 'Em análise pela área', icon: 'hourglass_empty' },
+  { key: 'drafting', label: 'Elaborando proposta', icon: 'description' },
+  { key: 'negotiation', label: 'Em negociação', icon: 'attach_money' },
+  { key: 'accepted', label: 'Aprovado pelo cliente', icon: 'how_to_reg' },
+  { key: 'awaiting-sample', label: 'Aguardando entrega da amostra', icon: 'inventory_2' },
+  { key: 'received', label: 'Recebido', icon: 'check_circle' },
+];
+
+const STATUS_TO_STEP_INDEX: Record<StatusKey, number> = {
+  qualification: 0,
+  pending: 1,
+  progress: 3,
+  finished: 6,
+  cancelled: 0,
 };
 
 const FILTER_TABS: ReadonlyArray<FilterTab> = [
@@ -112,6 +138,7 @@ const MOCK_ORCAMENTOS: ReadonlyArray<Orcamento> = [
 })
 export class ClientOrcamentosComponent {
   private readonly loginService = inject(LoginService);
+  private readonly appDialog = inject(AppDialogService);
 
   readonly filterTabs = FILTER_TABS;
   readonly activeFilter = signal<FilterKey>('all');
@@ -162,6 +189,17 @@ export class ClientOrcamentosComponent {
 
   setFilter(value: FilterKey): void {
     this.activeFilter.set(value);
+  }
+
+  openStatusDialog(orcamento: Orcamento): void {
+    const data: StatusPropostaDialogData = {
+      proposalId: orcamento.id.replace(/^#/, ''),
+      steps: PROPOSAL_STEPS,
+      currentIndex: STATUS_TO_STEP_INDEX[orcamento.status],
+      message: orcamento.pendingReview?.message,
+      callToAction: orcamento.estimatedValue ? 'Ver o orçamento' : undefined,
+    };
+    this.appDialog.open(StatusPropostaDialogComponent, data);
   }
 
   onSearchInput(value: string): void {

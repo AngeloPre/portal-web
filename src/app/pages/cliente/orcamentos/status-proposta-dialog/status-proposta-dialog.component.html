@@ -1,0 +1,34 @@
+<app-dialog-shell
+  [title]="'Status da Proposta'"
+  [subtitle]="'ID: ' + data.proposalId"
+>
+  <div dialog-brand class="status-dialog-brand">
+    <span class="status-dialog-brand__lactec">LACTEC</span>
+    <span class="status-dialog-brand__sep">|</span>
+    <span class="status-dialog-brand__lab">CONTROL LAB</span>
+  </div>
+
+  <app-status-stepper [steps]="data.steps" [currentIndex]="data.currentIndex" />
+
+  @if (data.message) {
+    <div class="status-dialog-message">
+      <mat-icon class="status-dialog-message__icon" aria-hidden="true">info</mat-icon>
+      <p class="status-dialog-message__text">{{ data.message }}</p>
+    </div>
+  }
+
+  @if (data.callToAction) {
+    <button
+      mat-flat-button
+      color="primary"
+      type="button"
+      class="status-dialog-cta"
+      (click)="confirm()"
+    >
+      <span>{{ data.callToAction }}</span>
+      <mat-icon iconPositionEnd>arrow_forward</mat-icon>
+    </button>
+  }
+
+  <small dialog-footer class="status-dialog-protocol">PROTOCOLO SEGURO LACTEC 2026</small>
+</app-dialog-shell>
