@@ -29,6 +29,15 @@
   --color-pill-done-ink: #1F6B44;
   --color-pill-cancel-bg: #E6E8E9;
   --color-pill-cancel-ink: #4B5A63;
+  /* Cores distintas por etapa do orçamento (StageName do Salesforce). */
+  --color-pill-analysis-bg: #FBE8CC;
+  --color-pill-analysis-ink: #8A5A12;
+  --color-pill-drafting-bg: #F0E0FF;
+  --color-pill-drafting-ink: #692DB1;
+  --color-pill-accepted-bg: #EAF0CC;
+  --color-pill-accepted-ink: #5E6B12;
+  --color-pill-awaiting-bg: #F7E6D2;
+  --color-pill-awaiting-ink: #9A5B1E;
 
   --color-alert-danger-bg: #FBE7E5;
   --color-alert-danger-ink: #8E2A24;
@@ -413,21 +422,33 @@ html {
   background: var(--color-pill-qual-bg);
   color: var(--color-pill-qual-ink);
 }
-.orcamento-status-pill--pending {
-  background: var(--color-pill-pend-bg);
-  color: var(--color-pill-pend-ink);
+.orcamento-status-pill--analysis {
+  background: var(--color-pill-analysis-bg);
+  color: var(--color-pill-analysis-ink);
 }
-.orcamento-status-pill--progress {
+.orcamento-status-pill--drafting {
+  background: var(--color-pill-drafting-bg);
+  color: var(--color-pill-drafting-ink);
+}
+.orcamento-status-pill--negotiation {
   background: var(--color-pill-proc-bg);
   color: var(--color-pill-proc-ink);
 }
-.orcamento-status-pill--finished {
+.orcamento-status-pill--accepted {
+  background: var(--color-pill-accepted-bg);
+  color: var(--color-pill-accepted-ink);
+}
+.orcamento-status-pill--awaiting-sample {
+  background: var(--color-pill-awaiting-bg);
+  color: var(--color-pill-awaiting-ink);
+}
+.orcamento-status-pill--received {
   background: var(--color-pill-done-bg);
   color: var(--color-pill-done-ink);
 }
 .orcamento-status-pill--cancelled {
-  background: var(--color-pill-cancel-bg);
-  color: var(--color-pill-cancel-ink);
+  background: var(--color-pill-pend-bg);
+  color: var(--color-pill-pend-ink);
 }
 
 .orcamento-card-review {

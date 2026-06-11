@@ -75,7 +75,7 @@
           <div class="orcamento-card-body__header">
             <div class="orcamento-card-field">
               <span class="orcamento-card-field__label">ID da Proposta</span>
-              <span class="orcamento-card-field__value">{{ orcamento.id }}</span>
+              <span class="orcamento-card-field__value">{{ orcamento.code }}</span>
             </div>
             <span class="orcamento-status-pill" [ngClass]="badge.badgeClass">
               {{ badge.label }}
@@ -151,7 +151,13 @@
         }
       </article>
     } @empty {
-      <p class="text-muted text-sm">Nenhum orçamento encontrado.</p>
+      @if (loadError()) {
+        <p class="text-muted text-sm">
+          Não foi possível carregar os orçamentos. Tente novamente mais tarde.
+        </p>
+      } @else {
+        <p class="text-muted text-sm">Nenhum orçamento encontrado.</p>
+      }
     }
   </div>
 </section>
