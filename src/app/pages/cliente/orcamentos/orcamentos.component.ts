@@ -35,6 +35,12 @@ type StatusKey =
   | 'accepted'
   | 'awaiting-sample'
   | 'received'
+  | 'incomplete'
+  | 'complete'
+  | 'validated'
+  | 'finalized'
+  | 'drafting-report'
+  | 'report-published'
   | 'cancelled';
 type FilterKey = 'all' | 'pending' | 'progress' | 'finished' | 'cancelled';
 
@@ -64,7 +70,7 @@ interface StatusBadge {
 interface FilterTab {
   value: FilterKey;
   label: string;
-  matches: ReadonlySet<StatusKey> | 'all';
+  matches: ReadonlySet<StatusKey>;
 }
 
 // O badge mostra a etapa real do Salesforce; a cor reaproveita as 5 pills existentes.
@@ -79,6 +85,18 @@ const STATUS_BADGE: Record<StatusKey, StatusBadge> = {
     badgeClass: 'orcamento-status-pill--awaiting-sample',
   },
   received: { label: 'Recebido', badgeClass: 'orcamento-status-pill--received' },
+  incomplete: { label: 'Incompleto', badgeClass: 'orcamento-status-pill--incomplete' },
+  complete: { label: 'Completo', badgeClass: 'orcamento-status-pill--complete' },
+  validated: { label: 'Validado', badgeClass: 'orcamento-status-pill--validated' },
+  finalized: { label: 'Finalizado', badgeClass: 'orcamento-status-pill--finalized' },
+  'drafting-report': {
+    label: 'Elaborando Relatório',
+    badgeClass: 'orcamento-status-pill--drafting-report',
+  },
+  'report-published': {
+    label: 'Relatório Publicado',
+    badgeClass: 'orcamento-status-pill--report-published',
+  },
   cancelled: { label: 'Cancelado', badgeClass: 'orcamento-status-pill--cancelled' },
 };
 
@@ -90,6 +108,12 @@ const PROPOSAL_STEPS: ReadonlyArray<StatusStepperStep> = [
   { key: 'accepted', label: 'Aprovado pelo cliente', icon: 'how_to_reg' },
   { key: 'awaiting-sample', label: 'Aguardando entrega da amostra', icon: 'inventory_2' },
   { key: 'received', label: 'Recebido', icon: 'check_circle' },
+  { key: 'incomplete', label: 'Incompleto', icon: 'warning_amber' },
+  { key: 'complete', label: 'Completo', icon: 'done_all' },
+  { key: 'validated', label: 'Validado', icon: 'verified' },
+  { key: 'finalized', label: 'Finalizado', icon: 'task_alt' },
+  { key: 'drafting-report', label: 'Elaborando relatório', icon: 'article' },
+  { key: 'report-published', label: 'Relatório publicado', icon: 'cloud_done' },
 ];
 
 // Cada etapa aponta para sua posição no stepper (mesma ordem do PROPOSAL_STEPS).
@@ -101,22 +125,58 @@ const STATUS_TO_STEP_INDEX: Record<StatusKey, number> = {
   accepted: 4,
   'awaiting-sample': 5,
   received: 6,
+  incomplete: 7,
+  complete: 8,
+  validated: 9,
+  finalized: 10,
+  'drafting-report': 11,
+  'report-published': 12,
   cancelled: 0,
 };
 
+const PENDING_STATUSES: ReadonlyArray<StatusKey> = [
+  'qualification',
+  'analysis',
+  'drafting',
+  'negotiation',
+];
+const PROGRESS_STATUSES: ReadonlyArray<StatusKey> = [
+  'accepted',
+  'awaiting-sample',
+  'received',
+  'incomplete',
+  'complete',
+  'validated',
+  'finalized',
+  'drafting-report',
+];
+const FINISHED_STATUSES: ReadonlyArray<StatusKey> = ['report-published'];
+
 const FILTER_TABS: ReadonlyArray<FilterTab> = [
-  { value: 'all', label: 'Todos', matches: 'all' },
+  {
+    value: 'all',
+    label: 'Todos',
+    matches: new Set<StatusKey>([
+      ...PENDING_STATUSES,
+      ...PROGRESS_STATUSES,
+      ...FINISHED_STATUSES,
+    ]),
+  },
   {
     value: 'pending',
     label: 'Pendentes de aceite',
-    matches: new Set<StatusKey>(['qualification', 'analysis']),
+    matches: new Set<StatusKey>(PENDING_STATUSES),
   },
   {
     value: 'progress',
     label: 'Em Andamento',
-    matches: new Set<StatusKey>(['drafting', 'negotiation', 'accepted', 'awaiting-sample']),
+    matches: new Set<StatusKey>(PROGRESS_STATUSES),
   },
-  { value: 'finished', label: 'Finalizados', matches: new Set<StatusKey>(['received']) },
+  {
+    value: 'finished',
+    label: 'Finalizados',
+    matches: new Set<StatusKey>(FINISHED_STATUSES),
+  },
   { value: 'cancelled', label: 'Cancelados', matches: new Set<StatusKey>(['cancelled']) },
 ];
 
@@ -235,11 +295,9 @@ export class ClientOrcamentosComponent {
   readonly visibleOrcamentos = computed(() => {
     const filter = this.activeFilter();
     const term = this.searchTerm().trim().toLowerCase();
+    const tab = FILTER_TABS.find((t) => t.value === filter);
     return this.orcamentos().filter((orcamento) => {
-      if (filter !== 'all') {
-        const tab = FILTER_TABS.find((t) => t.value === filter);
-        if (tab && tab.matches !== 'all' && !tab.matches.has(orcamento.status)) return false;
-      }
+      if (tab && !tab.matches.has(orcamento.status)) return false;
       if (!term) return true;
       return (
         orcamento.code.toLowerCase().includes(term) ||

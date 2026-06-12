@@ -38,6 +38,18 @@
   --color-pill-accepted-ink: #5E6B12;
   --color-pill-awaiting-bg: #F7E6D2;
   --color-pill-awaiting-ink: #9A5B1E;
+  --color-pill-incomplete-bg: #FFD9D6;
+  --color-pill-incomplete-ink: #8E2A24;
+  --color-pill-complete-bg: #D6F0E0;
+  --color-pill-complete-ink: #1F6B44;
+  --color-pill-validated-bg: #C7E6EC;
+  --color-pill-validated-ink: #0C6170;
+  --color-pill-finalized-bg: #BFE3C9;
+  --color-pill-finalized-ink: #155A36;
+  --color-pill-drafting-report-bg: #E4DAF7;
+  --color-pill-drafting-report-ink: #4F1F8E;
+  --color-pill-published-bg: #1F6B44;
+  --color-pill-published-ink: #FFFFFF;
 
   --color-alert-danger-bg: #FBE7E5;
   --color-alert-danger-ink: #8E2A24;
@@ -445,6 +457,30 @@ html {
 .orcamento-status-pill--received {
   background: var(--color-pill-done-bg);
   color: var(--color-pill-done-ink);
+}
+.orcamento-status-pill--incomplete {
+  background: var(--color-pill-incomplete-bg);
+  color: var(--color-pill-incomplete-ink);
+}
+.orcamento-status-pill--complete {
+  background: var(--color-pill-complete-bg);
+  color: var(--color-pill-complete-ink);
+}
+.orcamento-status-pill--validated {
+  background: var(--color-pill-validated-bg);
+  color: var(--color-pill-validated-ink);
+}
+.orcamento-status-pill--finalized {
+  background: var(--color-pill-finalized-bg);
+  color: var(--color-pill-finalized-ink);
+}
+.orcamento-status-pill--drafting-report {
+  background: var(--color-pill-drafting-report-bg);
+  color: var(--color-pill-drafting-report-ink);
+}
+.orcamento-status-pill--report-published {
+  background: var(--color-pill-published-bg);
+  color: var(--color-pill-published-ink);
 }
 .orcamento-status-pill--cancelled {
   background: var(--color-pill-pend-bg);
