@@ -2,7 +2,7 @@
 @let isCollapsed = !handset && collapsed();
 @let showLabels = handset || !isCollapsed;
 
-<mat-sidenav-container class="h-svh bg-bg" [autosize]="true">
+<mat-sidenav-container class="h-svh bg-lactec-surface" [autosize]="true">
   <mat-sidenav
     #drawer
     class="surface-dark border-0 overflow-x-hidden transition-all duration-200 ease-in-out"
@@ -12,7 +12,7 @@
     [disableClose]="!handset"
     [fixedInViewport]="false"
   >
-    <div class="h-full w-full flex flex-col bg-nav text-sidenav-text">
+    <div class="h-full w-full flex flex-col bg-lactec-nav text-lactec-on-nav">
       <div
         class="flex items-center gap-3 px-4 py-4 border-b border-white/10 shrink-0"
         [class.justify-center]="isCollapsed"
@@ -85,8 +85,8 @@
       <header
         class="flex items-center h-14 px-3 md:px-6 shrink-0 border-b"
         [ngClass]="handset
-          ? 'surface-dark bg-nav border-white/10 justify-end'
-          : 'bg-paper border-line justify-between'"
+          ? 'surface-dark bg-lactec-nav border-white/10 justify-end'
+          : 'bg-lactec-paper border-lactec-line justify-between'"
       >
         @if (!handset) {
           <button

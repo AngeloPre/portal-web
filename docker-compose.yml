@@ -1,0 +1,43 @@
+# Sobe o portal-web sem precisar de Node instalado na máquina.
+#
+#   docker compose up                 -> dev com hot reload em http://localhost:4200
+#   docker compose up web-prod        -> build de produção via nginx em http://localhost:8080
+#
+# Depois de mexer em package.json/package-lock.json, recrie os volumes anônimos,
+# senão o node_modules antigo continua montado por cima do novo:
+#   docker compose up --build --renew-anon-volumes
+#
+# A API (.NET) continua fora do compose. Como as chamadas partem do navegador,
+# o http://localhost:5125 de src/app/environment/env.ts resolve para a porta
+# 5125 da SUA máquina — basta a API estar rodando aí. Se um dia a API virar um
+# serviço deste compose, troque essa URL pelo nome do serviço.
+
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "4200:4200"
+    volumes:
+      # Código do host montado no contêiner, para o hot reload enxergar as edições.
+      - .:/app
+      # Volumes anônimos protegem o que é da imagem: sem eles, o bind mount
+      # acima esconderia o node_modules instalado no build. Eles persistem
+      # entre rebuilds — veja a nota sobre --renew-anon-volumes no topo.
+      - /app/node_modules
+      - /app/.angular
+    # Se o hot reload não disparar ao salvar (inotify não propaga em alguns
+    # setups de bind mount), troque por polling:
+    # command: npx ng serve --host 0.0.0.0 --port 4200 --poll 2000
+    stdin_open: true
+    tty: true
+
+  web-prod:
+    profiles: ["prod"]
+    build:
+      context: .
+      target: prod
+    ports:
+      - "8080:80"
+    restart: unless-stopped

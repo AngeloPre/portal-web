@@ -11,7 +11,6 @@
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
-          "standalone": true,
           "inlineStyle": true,
           "skipTests": true
         }
@@ -37,7 +36,7 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/theme.scss",
               "src/styles.css"
             ],
             "scripts": []
@@ -96,7 +95,7 @@
               }
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
+              "src/theme.scss",
               "src/styles.css"
             ],
             "scripts": []
