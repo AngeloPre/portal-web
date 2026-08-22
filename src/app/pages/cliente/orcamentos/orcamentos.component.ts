@@ -342,7 +342,11 @@ export class ClientOrcamentosComponent {
       message: orcamento.pendingReview?.message,
       callToAction: orcamento.estimatedValue ? 'Ver o orçamento' : undefined,
     };
-    this.appDialog.open(StatusPropostaDialogComponent, data);
+    this.appDialog.open(
+      StatusPropostaDialogComponent,
+      data,
+      `Status da proposta ${data.proposalId}`,
+    );
   }
 
   onSearchInput(value: string): void {

@@ -9,9 +9,15 @@ export class AppDialogService {
   private readonly dialog = inject(MatDialog);
   private readonly breakpoints = inject(BreakpointObserver);
 
+  /**
+   * @param ariaLabel Nome acessível do diálogo. A doc do MatDialog pede
+   *   `ariaLabel` ou `ariaLabelledBy` no MatDialogConfig — sem um dos dois o
+   *   leitor de tela anuncia apenas "diálogo".
+   */
   open<T, D = unknown, R = unknown>(
     component: Type<T>,
-    data?: D,
+    data: D | undefined,
+    ariaLabel: string,
     extra?: MatDialogConfig<D>,
   ): MatDialogRef<T, R> {
     const handset = this.breakpoints.isMatched(HANDSET_QUERY);
@@ -40,6 +46,7 @@ export class AppDialogService {
 
     return this.dialog.open<T, D, R>(component, {
       data,
+      ariaLabel,
       autoFocus: 'dialog',
       ...(handset ? mobile : desktop),
       ...extra,
