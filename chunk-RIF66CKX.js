@@ -1,0 +1,1 @@
+import{p}from"./chunk-65TLQC5G.js";import{Fb as o,kb as n}from"./chunk-VJ3XB6X6.js";var a=class t{static \u0275fac=function(e){return new(e||t)};static \u0275cmp=n({type:t,selectors:[["app-wrapper-auth"]],decls:1,vars:0,template:function(e,i){e&1&&o(0,"router-outlet")},dependencies:[p],encapsulation:2,changeDetection:0})};export{a as WrapperAuthComponent};
