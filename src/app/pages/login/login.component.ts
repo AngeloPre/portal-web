@@ -41,7 +41,7 @@ export class LoginComponent {
   });
 
   togglePassword(): void {
-    this.showPassword.update((v) => !v);
+    this.showPassword.update((visivel) => !visivel);
   }
 
   submit(): void {

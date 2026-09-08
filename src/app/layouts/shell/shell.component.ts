@@ -57,7 +57,7 @@ export class ShellComponent {
   private readonly loginService = inject(LoginService);
 
   readonly isHandset = toSignal(
-    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((s) => s.matches)),
+    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((estado) => estado.matches)),
     { initialValue: false },
   );
 
@@ -82,7 +82,7 @@ export class ShellComponent {
   }
 
   toggleCollapse(): void {
-    this.collapsed.update((v) => !v);
+    this.collapsed.update((recolhido) => !recolhido);
   }
 
   onSecondaryAction(action: SecondaryAction['action']): void {

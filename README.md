@@ -1,5 +1,20 @@
 # PortalWeb
 
+Portal do Cliente Lactec: acompanhamento de orçamentos, status de ensaios,
+relatórios e indicadores de saúde de equipamentos.
+
+As telas do cliente, a linha de etapas do processo e o que ainda é massa de
+demonstração estão documentados em [`docs/telas-do-cliente.md`](docs/telas-do-cliente.md).
+
+## Subir com Docker
+
+```bash
+docker compose up -d --build web            # http://localhost:4200
+PORTAL_WEB_PORT=4300 docker compose up -d web  # outra porta, se a 4200 estiver ocupada
+```
+
+Login de desenvolvimento: `lactec@lactec` / `lactec`.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.27.
 
 ## Development server

@@ -1,6 +1,6 @@
 <app-dialog-shell
-  [title]="'Status da Proposta'"
-  [subtitle]="'ID: ' + data.proposalId"
+  [title]="data.titulo"
+  [subtitle]="(data.protocolo ? 'PROTOCOL: ' + data.protocolo + ' · ' : '') + 'ID: ' + data.proposalId"
 >
   <div dialog-brand class="status-dialog-brand">
     <span class="status-dialog-brand__lactec">LACTEC</span>
@@ -13,7 +13,12 @@
   @if (data.message) {
     <div class="status-dialog-message">
       <mat-icon class="status-dialog-message__icon" aria-hidden="true">info</mat-icon>
-      <p class="status-dialog-message__text">{{ data.message }}</p>
+      <div>
+        @if (data.messageTitle) {
+          <p class="status-dialog-message__title">{{ data.messageTitle }}</p>
+        }
+        <p class="status-dialog-message__text">{{ data.message }}</p>
+      </div>
     </div>
   }
 
@@ -27,6 +32,13 @@
       <span>{{ data.callToAction }}</span>
       <mat-icon iconPositionEnd>arrow_forward</mat-icon>
     </button>
+  }
+
+  @if (data.contato) {
+    <p class="status-dialog-contact">
+      Entrar em contato:
+      <a [href]="'mailto:' + data.contato">{{ data.contato }}</a>
+    </p>
   }
 
   <small dialog-footer class="status-dialog-protocol">PROTOCOLO SEGURO LACTEC 2026</small>

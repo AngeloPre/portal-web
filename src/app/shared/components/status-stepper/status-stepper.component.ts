@@ -33,7 +33,7 @@ export class StatusStepperComponent {
   readonly currentIndex = input.required<number>();
 
   private readonly isHandset = toSignal(
-    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((s) => s.matches)),
+    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((estado) => estado.matches)),
     { initialValue: false },
   );
 

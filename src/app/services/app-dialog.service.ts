@@ -11,7 +11,7 @@ export class AppDialogService {
 
   /**
    * @param ariaLabel Nome acessível do diálogo. A doc do MatDialog pede
-   *   `ariaLabel` ou `ariaLabelledBy` no MatDialogConfig — sem um dos dois o
+   *   `ariaLabel` ou `ariaLabelledBy` no MatDialogConfig: sem um dos dois o
    *   leitor de tela anuncia apenas "diálogo".
    */
   open<T, D = unknown, R = unknown>(
