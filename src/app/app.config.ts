@@ -9,7 +9,7 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter, withInMemoryScrolling } from '@angular/router';
+import { provideRouter, withComponentInputBinding, withInMemoryScrolling } from '@angular/router';
 import { JwtModule } from '@auth0/angular-jwt';
 
 import { authErrorInterceptor } from '@core/interceptors/auth-error.interceptor';
@@ -25,6 +25,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideRouter(
       routes,
+      // Parâmetros de rota chegam como input() nos componentes de detalhe.
+      withComponentInputBinding(),
       withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' }),
     ),
     provideHttpClient(withInterceptors([authErrorInterceptor])),

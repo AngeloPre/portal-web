@@ -11,10 +11,17 @@ import {
 
 export interface StatusPropostaDialogData {
   proposalId: string;
+  /** Título do recorte: proposta, análise técnica das amostras ou laboratório. */
+  titulo: string;
   steps: readonly StatusStepperStep[];
   currentIndex: number;
+  messageTitle?: string;
   message?: string;
   callToAction?: string;
+  /** Protocolo do laboratório, exibido a partir do recebimento da amostra. */
+  protocolo?: string;
+  /** Contato do responsável, exibido nos recortes de laboratório. */
+  contato?: string;
 }
 
 @Component({

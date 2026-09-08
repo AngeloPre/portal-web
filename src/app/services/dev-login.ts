@@ -1,4 +1,4 @@
-// DEV-ONLY — apagar este arquivo + remover o uso em login.service.ts
+// DEV-ONLY: apagar este arquivo + remover o uso em login.service.ts
 // (import e bloco `if (dev) {...}`) quando o backend de auth estiver pronto.
 import { Token } from '@/app/model/token';
 
@@ -45,7 +45,7 @@ function makeDevJwt(payload: Record<string, unknown>): string {
 export function tryDevLogin(email: string, password: string): DevAuthResult | null {
   const normalizedEmail = email.trim().toLowerCase();
   const match = DEV_USERS.find(
-    (u) => u.email === normalizedEmail && u.password === password,
+    (usuario) => usuario.email === normalizedEmail && usuario.password === password,
   );
   if (!match) return null;
 

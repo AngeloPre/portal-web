@@ -12,8 +12,20 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { Router, RouterLink } from '@angular/router';
 
 import { StatusStepperStep } from '@shared/components/status-stepper/status-stepper.component';
+
+import {
+  abaDaSituacao,
+  type ChaveDaAba,
+  ehTerminal,
+  type EtapaDaLinha,
+  grupoDaEtapa,
+  indiceDaEtapa,
+  LINHA_DE_ETAPAS,
+  type SituacaoDaSolicitacao,
+} from '@/app/model/analysis-pipeline';
 
 import { Quote } from '@/app/model/quote';
 import { AppDialogService } from '@/app/services/app-dialog.service';
@@ -24,25 +36,6 @@ import {
   StatusPropostaDialogComponent,
   StatusPropostaDialogData,
 } from './status-proposta-dialog/status-proposta-dialog.component';
-
-// Etapas do orçamento = StageName da Opportunity (Salesforce), progressão linear.
-// Hoje só temos as etapas do Salesforce; a parte pós-amostra virá do AutoLab.
-type StatusKey =
-  | 'qualification'
-  | 'analysis'
-  | 'drafting'
-  | 'negotiation'
-  | 'accepted'
-  | 'awaiting-sample'
-  | 'received'
-  | 'incomplete'
-  | 'complete'
-  | 'validated'
-  | 'finalized'
-  | 'drafting-report'
-  | 'report-published'
-  | 'cancelled';
-type FilterKey = 'all' | 'pending' | 'progress' | 'finished' | 'cancelled';
 
 interface PendingReviewNotice {
   deadline: string;
@@ -58,7 +51,7 @@ interface Orcamento {
   company: string;
   externalContact: string;
   estimatedValue?: string;
-  status: StatusKey;
+  status: SituacaoDaSolicitacao;
   pendingReview?: PendingReviewNotice;
 }
 
@@ -68,120 +61,95 @@ interface StatusBadge {
 }
 
 interface FilterTab {
-  value: FilterKey;
+  value: ChaveDaAba;
   label: string;
-  matches: ReadonlySet<StatusKey>;
 }
 
-// O badge mostra a etapa real do Salesforce; a cor reaproveita as 5 pills existentes.
-const STATUS_BADGE: Record<StatusKey, StatusBadge> = {
-  qualification: { label: 'Qualificação', badgeClass: 'orcamento-status-pill--qualification' },
-  analysis: { label: 'Em Análise pela Área', badgeClass: 'orcamento-status-pill--analysis' },
-  drafting: { label: 'Elaborando Proposta', badgeClass: 'orcamento-status-pill--drafting' },
-  negotiation: { label: 'Em Negociação', badgeClass: 'orcamento-status-pill--negotiation' },
-  accepted: { label: 'Aprovado pelo Cliente', badgeClass: 'orcamento-status-pill--accepted' },
-  'awaiting-sample': {
+const STATUS_BADGE: Record<SituacaoDaSolicitacao, StatusBadge> = {
+  qualificacao: { label: 'Qualificação', badgeClass: 'orcamento-status-pill--qualification' },
+  'analise-da-area': { label: 'Em Análise pela Área', badgeClass: 'orcamento-status-pill--analysis' },
+  'elaborando-proposta': { label: 'Elaborando Proposta', badgeClass: 'orcamento-status-pill--drafting' },
+  negociacao: { label: 'Em Negociação', badgeClass: 'orcamento-status-pill--negotiation' },
+  'aprovado-pelo-cliente': {
+    label: 'Aprovado pelo Cliente',
+    badgeClass: 'orcamento-status-pill--accepted',
+  },
+  'aguardando-amostra': {
     label: 'Aguardando Entrega da Amostra',
     badgeClass: 'orcamento-status-pill--awaiting-sample',
   },
-  received: { label: 'Recebido', badgeClass: 'orcamento-status-pill--received' },
-  incomplete: { label: 'Incompleto', badgeClass: 'orcamento-status-pill--incomplete' },
-  complete: { label: 'Completo', badgeClass: 'orcamento-status-pill--complete' },
-  validated: { label: 'Validado', badgeClass: 'orcamento-status-pill--validated' },
-  finalized: { label: 'Finalizado', badgeClass: 'orcamento-status-pill--finalized' },
-  'drafting-report': {
+  recebido: { label: 'Recebido', badgeClass: 'orcamento-status-pill--received' },
+  protocolado: { label: 'Protocolado', badgeClass: 'orcamento-status-pill--protocoled' },
+  'em-execucao': { label: 'Em Execução', badgeClass: 'orcamento-status-pill--running' },
+  incompleto: { label: 'Incompleto', badgeClass: 'orcamento-status-pill--incomplete' },
+  completo: { label: 'Completo', badgeClass: 'orcamento-status-pill--complete' },
+  validado: { label: 'Validado', badgeClass: 'orcamento-status-pill--validated' },
+  finalizado: { label: 'Finalizado', badgeClass: 'orcamento-status-pill--finalized' },
+  'elaborando-relatorio': {
     label: 'Elaborando Relatório',
     badgeClass: 'orcamento-status-pill--drafting-report',
   },
-  'report-published': {
+  'relatorio-publicado': {
     label: 'Relatório Publicado',
     badgeClass: 'orcamento-status-pill--report-published',
   },
-  cancelled: { label: 'Cancelado', badgeClass: 'orcamento-status-pill--cancelled' },
+  cancelado: { label: 'Cancelado', badgeClass: 'orcamento-status-pill--cancelled' },
+  recusado: { label: 'Recusado', badgeClass: 'orcamento-status-pill--cancelled' },
 };
 
-const PROPOSAL_STEPS: ReadonlyArray<StatusStepperStep> = [
-  { key: 'qualification', label: 'Qualificação' },
-  { key: 'analysis', label: 'Em análise pela área', icon: 'hourglass_empty' },
-  { key: 'drafting', label: 'Elaborando proposta', icon: 'description' },
-  { key: 'negotiation', label: 'Em negociação', icon: 'attach_money' },
-  { key: 'accepted', label: 'Aprovado pelo cliente', icon: 'how_to_reg' },
-  { key: 'awaiting-sample', label: 'Aguardando entrega da amostra', icon: 'inventory_2' },
-  { key: 'received', label: 'Recebido', icon: 'check_circle' },
-  { key: 'incomplete', label: 'Incompleto', icon: 'warning_amber' },
-  { key: 'complete', label: 'Completo', icon: 'done_all' },
-  { key: 'validated', label: 'Validado', icon: 'verified' },
-  { key: 'finalized', label: 'Finalizado', icon: 'task_alt' },
-  { key: 'drafting-report', label: 'Elaborando relatório', icon: 'article' },
-  { key: 'report-published', label: 'Relatório publicado', icon: 'cloud_done' },
-];
+const PROPOSAL_STEPS: ReadonlyArray<StatusStepperStep> = LINHA_DE_ETAPAS.map((etapa) => ({
+  key: etapa.chave,
+  label: etapa.rotulo,
+  icon: etapa.icone,
+}));
 
-// Cada etapa aponta para sua posição no stepper (mesma ordem do PROPOSAL_STEPS).
-const STATUS_TO_STEP_INDEX: Record<StatusKey, number> = {
-  qualification: 0,
-  analysis: 1,
-  drafting: 2,
-  negotiation: 3,
-  accepted: 4,
-  'awaiting-sample': 5,
-  received: 6,
-  incomplete: 7,
-  complete: 8,
-  validated: 9,
-  finalized: 10,
-  'drafting-report': 11,
-  'report-published': 12,
-  cancelled: 0,
+const AVISO_DA_ETAPA: Partial<
+  Record<EtapaDaLinha, { titulo: string; texto: string; acao?: string }>
+> = {
+  'analise-da-area': {
+    titulo: 'Estamos em busca da melhor solução para seu negócio',
+    texto:
+      'Nossos profissionais estão validando qual é o laboratório capaz de solucionar e trazer ' +
+      'resultados para cada uma das análises requisitadas. Em breve seu orçamento ficará ' +
+      'disponível por meio desta plataforma!',
+  },
+  negociacao: {
+    titulo: 'Aguardando sua revisão',
+    texto:
+      'Esta proposta técnica está pronta para execução. Por favor, revise os termos e custos ' +
+      'associados para prosseguir com a análise laboratorial.',
+    acao: 'Ver o orçamento',
+  },
+  'aprovado-pelo-cliente': {
+    titulo: 'Aguardando sua revisão',
+    texto:
+      'Esta proposta técnica está pronta para execução. Por favor, revise os termos e custos ' +
+      'associados para prosseguir com a análise laboratorial.',
+    acao: 'Ver o orçamento',
+  },
 };
 
-const PENDING_STATUSES: ReadonlyArray<StatusKey> = [
-  'qualification',
-  'analysis',
-  'drafting',
-  'negotiation',
-];
-const PROGRESS_STATUSES: ReadonlyArray<StatusKey> = [
-  'accepted',
-  'awaiting-sample',
-  'received',
-  'incomplete',
-  'complete',
-  'validated',
-  'finalized',
-  'drafting-report',
-];
-const FINISHED_STATUSES: ReadonlyArray<StatusKey> = ['report-published'];
+// Placeholder de demonstração: o contato real vem do AutoLAB junto do
+// protocolo, e não pode ser endereço de pessoa fixo no bundle.
+const CONTATO_DO_LABORATORIO = 'atendimento@exemplo.com.br';
+
 
 const FILTER_TABS: ReadonlyArray<FilterTab> = [
-  {
-    value: 'all',
-    label: 'Todos',
-    matches: new Set<StatusKey>([
-      ...PENDING_STATUSES,
-      ...PROGRESS_STATUSES,
-      ...FINISHED_STATUSES,
-    ]),
-  },
-  {
-    value: 'pending',
-    label: 'Pendentes de aceite',
-    matches: new Set<StatusKey>(PENDING_STATUSES),
-  },
-  {
-    value: 'progress',
-    label: 'Em Andamento',
-    matches: new Set<StatusKey>(PROGRESS_STATUSES),
-  },
-  {
-    value: 'finished',
-    label: 'Finalizados',
-    matches: new Set<StatusKey>(FINISHED_STATUSES),
-  },
-  { value: 'cancelled', label: 'Cancelados', matches: new Set<StatusKey>(['cancelled']) },
+  { value: 'todos', label: 'Todos' },
+  { value: 'pendentes', label: 'Pendentes de aceite' },
+  { value: 'andamento', label: 'Em Andamento' },
+  { value: 'finalizados', label: 'Finalizados' },
+  { value: 'cancelados', label: 'Cancelados' },
 ];
 
-// Placeholder para o único campo que a API de Quote ainda não expõe (Contato Externo).
 const FIELD_PLACEHOLDER = '—';
+
+function saudacaoDoDia(agora = new Date()): string {
+  const hora = agora.getHours();
+  if (hora < 12) return 'Bom dia';
+  if (hora < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
 
 const BRL_FORMATTER = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
@@ -194,45 +162,50 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('pt-BR', {
   year: 'numeric',
 });
 
-// CreatedDate vem do Salesforce em ISO 8601 (ex.: 2026-03-13T13:16:07.000+0000).
+// O Salesforce manda ISO 8601 com offset: 2026-03-13T13:16:07.000+0000.
 function formatCreatedAt(createdDate: string | null): string {
   if (!createdDate) return FIELD_PLACEHOLDER;
   const date = new Date(createdDate);
   return Number.isNaN(date.getTime()) ? FIELD_PLACEHOLDER : DATE_FORMATTER.format(date);
 }
 
-// StageName cru da Opportunity -> etapa interna. Match exato (case-insensitive) com os
-// valores conhecidos do Salesforce; o regex cobre variações futuras e cai em 'qualification'.
-const STAGE_BY_NAME: Record<string, StatusKey> = {
-  'qualificação': 'qualification',
-  'em análise pela área': 'analysis',
-  'em revisão': 'analysis',
-  'elaborando proposta': 'drafting',
-  'negociação': 'negotiation',
-  'aprovado pelo cliente': 'accepted',
-  'aguardando entrega da amostra': 'awaiting-sample',
-  'fechado ganho': 'received',
-  'fechado perdido': 'cancelled',
-  'fechado recusado lactec': 'cancelled',
-  'cancelado': 'cancelled',
+// O match exato cobre os valores conhecidos do Salesforce; o regex abaixo
+// existe para variações futuras não derrubarem a tela.
+const STAGE_BY_NAME: Record<string, SituacaoDaSolicitacao> = {
+  'qualificação': 'qualificacao',
+  'em análise pela área': 'analise-da-area',
+  'em revisão': 'analise-da-area',
+  'elaborando proposta': 'elaborando-proposta',
+  'negociação': 'negociacao',
+  'aprovado pelo cliente': 'aprovado-pelo-cliente',
+  'aguardando entrega da amostra': 'aguardando-amostra',
+  'fechado ganho': 'recebido',
+  // Etapas que chegam do AutoLAB depois que a amostra entra no laboratório.
+  'completo': 'completo',
+  'validado': 'validado',
+  'finalizado': 'finalizado',
+  'elaborando relatório': 'elaborando-relatorio',
+  'relatório publicado': 'relatorio-publicado',
+  'fechado perdido': 'cancelado',
+  'fechado recusado lactec': 'recusado',
+  'cancelado': 'cancelado',
 };
 
-function mapStage(rawStage: string): StatusKey {
+function mapStage(rawStage: string): SituacaoDaSolicitacao {
   const stage = rawStage.trim().toLowerCase();
   const exact = STAGE_BY_NAME[stage];
   if (exact) return exact;
 
-  if (/(perdid|recus|cancel|reject|denied|negad)/.test(stage)) return 'cancelled';
-  if (/(ganho|won|recebid|conclu|complete)/.test(stage)) return 'received';
-  if (/amostra/.test(stage)) return 'awaiting-sample';
-  if (/(aprovad|aceit|accept|approv)/.test(stage)) return 'accepted';
-  if (/negocia/.test(stage)) return 'negotiation';
-  if (/(elabor|draft|propost)/.test(stage)) return 'drafting';
-  if (/(análise|analise|revis|review|analysis)/.test(stage)) return 'analysis';
-  return 'qualification';
+  if (/(perdid|recus|cancel|reject|denied|negad)/.test(stage)) return 'cancelado';
+  if (/(ganho|won|recebid|conclu|complete)/.test(stage)) return 'recebido';
+  if (/amostra/.test(stage)) return 'aguardando-amostra';
+  if (/(aprovad|aceit|accept|approv)/.test(stage)) return 'aprovado-pelo-cliente';
+  if (/negocia/.test(stage)) return 'negociacao';
+  if (/(elabor|draft|propost)/.test(stage)) return 'elaborando-proposta';
+  if (/(análise|analise|revis|review|analysis)/.test(stage)) return 'analise-da-area';
+  return 'qualificacao';
 }
 
-// Contato externo: prioriza o nome; quando só há e-mail, usa o e-mail.
 function resolveExternalContact(quote: Quote): string {
   return quote.externalContactName?.trim() || quote.externalContactEmail?.trim() || FIELD_PLACEHOLDER;
 }
@@ -256,7 +229,7 @@ function mapQuoteToOrcamento(quote: Quote): Orcamento {
 @Component({
   selector: 'app-client-orcamentos',
   standalone: true,
-  imports: [NgClass, FormsModule, MatButtonModule, MatIconModule, MatMenuModule],
+  imports: [NgClass, FormsModule, RouterLink, MatButtonModule, MatIconModule, MatMenuModule],
   templateUrl: './orcamentos.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -264,10 +237,11 @@ export class ClientOrcamentosComponent {
   private readonly loginService = inject(LoginService);
   private readonly appDialog = inject(AppDialogService);
   private readonly quotesService = inject(QuotesService);
+  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   readonly filterTabs = FILTER_TABS;
-  readonly activeFilter = signal<FilterKey>('all');
+  readonly activeFilter = signal<ChaveDaAba>('todos');
   readonly searchTerm = signal('');
   readonly loadError = signal(false);
 
@@ -277,16 +251,12 @@ export class ClientOrcamentosComponent {
     return name.split(/\s+/)[0];
   });
 
-  readonly greeting = computed(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) return 'Bom dia';
-    if (hour < 18) return 'Boa tarde';
-    return 'Boa noite';
-  });
+  // Um computed aqui ficaria cacheado: a hora não é signal.
+  readonly greeting = saudacaoDoDia();
 
   readonly mobileFilterLabel = computed(() => {
     const current = this.activeFilter();
-    if (current === 'all') return 'Todos';
+    if (current === 'todos') return 'Todos';
     return FILTER_TABS.find((tab) => tab.value === current)?.label ?? 'Todos';
   });
 
@@ -295,9 +265,8 @@ export class ClientOrcamentosComponent {
   readonly visibleOrcamentos = computed(() => {
     const filter = this.activeFilter();
     const term = this.searchTerm().trim().toLowerCase();
-    const tab = FILTER_TABS.find((t) => t.value === filter);
     return this.orcamentos().filter((orcamento) => {
-      if (tab && !tab.matches.has(orcamento.status)) return false;
+      if (filter !== 'todos' && abaDaSituacao(orcamento.status) !== filter) return false;
       if (!term) return true;
       return (
         orcamento.code.toLowerCase().includes(term) ||
@@ -326,27 +295,49 @@ export class ClientOrcamentosComponent {
       });
   }
 
-  badgeFor(status: StatusKey): StatusBadge {
+  badgeFor(status: SituacaoDaSolicitacao): StatusBadge {
     return STATUS_BADGE[status];
   }
 
-  setFilter(value: FilterKey): void {
+  setFilter(value: ChaveDaAba): void {
     this.activeFilter.set(value);
   }
 
   openStatusDialog(orcamento: Orcamento): void {
+    const cancelado = ehTerminal(orcamento.status);
+    const etapa: EtapaDaLinha = ehTerminal(orcamento.status) ? 'qualificacao' : orcamento.status;
+    const indice = indiceDaEtapa(etapa);
+    const grupo = grupoDaEtapa(indice);
+    const aviso = cancelado ? undefined : AVISO_DA_ETAPA[etapa];
+
     const data: StatusPropostaDialogData = {
       proposalId: orcamento.code.replace(/^#/, ''),
-      steps: PROPOSAL_STEPS,
-      currentIndex: STATUS_TO_STEP_INDEX[orcamento.status],
-      message: orcamento.pendingReview?.message,
-      callToAction: orcamento.estimatedValue ? 'Ver o orçamento' : undefined,
+      titulo: cancelado ? 'Solicitação encerrada' : grupo.titulo,
+      // Cada tela mostra um recorte só, não a linha inteira.
+      steps: PROPOSAL_STEPS.slice(grupo.de, grupo.ate + 1),
+      currentIndex: indice - grupo.de,
+      messageTitle: aviso?.titulo,
+      message: cancelado
+        ? 'Esta solicitação foi encerrada e não avança mais na linha de etapas.'
+        : aviso?.texto,
+      callToAction: aviso?.acao,
+      protocolo: grupo.chave === 'proposta' ? undefined : `L-${orcamento.code}-X`,
+      contato: grupo.chave === 'proposta' ? undefined : CONTATO_DO_LABORATORIO,
     };
-    this.appDialog.open(
-      StatusPropostaDialogComponent,
-      data,
-      `Status da proposta ${data.proposalId}`,
-    );
+
+    this.appDialog
+      .open<StatusPropostaDialogComponent, StatusPropostaDialogData, string>(
+        StatusPropostaDialogComponent,
+        data,
+        `${data.titulo} ${data.proposalId}`,
+      )
+      .afterClosed()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((resultado) => {
+        if (resultado === 'confirmed') {
+          void this.router.navigate(['/cliente/orcamentos', orcamento.id]);
+        }
+      });
   }
 
   onSearchInput(value: string): void {

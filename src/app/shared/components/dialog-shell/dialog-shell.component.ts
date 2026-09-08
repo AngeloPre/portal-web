@@ -25,7 +25,7 @@ export class DialogShellComponent {
 
   /** No mobile o fechar vive na navigation bar do topo, não dentro do modal. */
   readonly isHandset = toSignal(
-    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((s) => s.matches)),
+    this.breakpoints.observe([HANDSET_QUERY]).pipe(map((estado) => estado.matches)),
     { initialValue: false },
   );
 

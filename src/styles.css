@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 
-/* Paleta Lactec — fonte única das cores da aplicação.
+/* Paleta Lactec: fonte única das cores da aplicação.
    `static` garante que todas as variáveis sejam emitidas em :root mesmo quando
    nenhuma classe utilitária as usa, porque src/theme.scss (tema do Angular
    Material) as referencia por var(). */
@@ -117,6 +117,41 @@ html {
 .display {
   font-family: 'Instrument Sans', system-ui, sans-serif;
   letter-spacing: -0.01em;
+}
+
+/* Um rolador só na área de conteúdo. O container do Material traz
+   `overflow: auto` no próprio elemento de conteúdo, e o `main` do shell também
+   rola: empilhados, o conteúdo rola primeiro e a página rola depois. Quem rola
+   é o `main`, que preserva o cabeçalho fixo; o container do Material não pode
+   competir. Elemento + classe sobe a especificidade sem `!important`. */
+mat-sidenav-content.mat-drawer-content {
+  overflow: hidden;
+}
+
+/* Tamanhos de ícone do Material. O componente fixa 24px em width, height e
+   font-size; para mudar isso sem `!important` basta subir a especificidade com
+   elemento + classe, que é o que .status-stepper__icon já faz. O line-height
+   entra junto porque a caixa tem overflow hidden: sem ele o glifo é empurrado
+   para fora. */
+mat-icon.icone-16 {
+  font-size: 16px;
+  line-height: 16px;
+  width: 16px;
+  height: 16px;
+}
+
+mat-icon.icone-20 {
+  font-size: 20px;
+  line-height: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+mat-icon.icone-36 {
+  font-size: 36px;
+  line-height: 36px;
+  width: 36px;
+  height: 36px;
 }
 
 .mono {
@@ -390,6 +425,14 @@ html {
   background: var(--color-lactec-pill-complete-bg);
   color: var(--color-lactec-pill-complete-ink);
 }
+.orcamento-status-pill--protocoled {
+  background: var(--color-lactec-pill-proc-bg);
+  color: var(--color-lactec-pill-proc-ink);
+}
+.orcamento-status-pill--running {
+  background: var(--color-lactec-pill-analysis-bg);
+  color: var(--color-lactec-pill-analysis-ink);
+}
 .orcamento-status-pill--validated {
   background: var(--color-lactec-pill-validated-bg);
   color: var(--color-lactec-pill-validated-ink);
@@ -602,10 +645,27 @@ mat-icon.status-stepper__icon {
   height: 20px;
   flex: none;
 }
+.status-dialog-message__title {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-lactec-ink);
+}
+
 .status-dialog-message__text {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
+}
+
+.status-dialog-contact {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--color-lactec-ink-soft);
+}
+
+.status-dialog-contact a {
+  color: var(--color-lactec-primary-dark);
 }
 
 
@@ -629,7 +689,7 @@ mat-icon.status-stepper__icon {
   flex-direction: column;
   height: 100dvh;
 }
-/* divA — barra que cobre a navigation real, só com o fechar */
+/* divA: barra que cobre a navigation real, só com o fechar */
 .dialog-sheet__bar {
   flex: none;
   height: 56px;
@@ -639,7 +699,7 @@ mat-icon.status-stepper__icon {
   padding: 0 4px;
   background: var(--color-lactec-nav);
 }
-/* divB — escurecedor; segura o sheet colado embaixo (justify-end) e fica atrás
+/* divB: escurecedor; segura o sheet colado embaixo (justify-end) e fica atrás
    dele enquanto sobe, então não abre buraco. Toque fora fecha. */
 .dialog-sheet__backdrop {
   flex: 1 1 auto;
@@ -651,7 +711,7 @@ mat-icon.status-stepper__icon {
   background: rgba(11, 34, 48, 0.55);
   cursor: pointer;
 }
-/* divC — o modal em si, colado embaixo, quadrado. Só ele desliza de baixo;
+/* divC: o modal em si, colado embaixo, quadrado. Só ele desliza de baixo;
    barra e escurecedor não são afetados. */
 .dialog-sheet__panel {
   flex: none;

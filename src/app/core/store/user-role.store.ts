@@ -48,9 +48,9 @@ export const UserRole = signalStore(
   withComputed(({ role }) => ({
     isClient: computed(() => role()?.name === 'client'),
     dashboardPath: computed(() => {
-      const r = role();
-      if (!r) return '/login';
-      return r.name === 'client' ? '/cliente' : '/login';
+      const papel = role();
+      if (!papel) return '/login';
+      return papel.name === 'client' ? '/cliente' : '/login';
     }),
   })),
   withMethods((store) => ({
